@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Search Engine</title>
+    <style>
+        *{
+            margin: 0;padding: 0;box-sizing: border-box;
+            font-family: Poppins;
+        }
+        body{
+            background-color: rgba(26, 22, 22, 0.836);
+            color: #fff;
+        }
+        h1{
+            text-align: center;
+            font-size: 2.5rem;
+            margin: 30px auto;
+            font-weight: 600;
+        }
+        form{
+            width: 90%;
+            max-width: 600px;
+            margin: auto;
+            height: 60px;
+            background-color: rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            border-radius: 4px;
+        }
+        form input{
+            flex: 1;
+            height: 100%;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            font-size: 18px;
+            padding: 0 30px;
+        }
+        
+        form input:-webkit-autofill,
+        form input:-webkit-autofill:hover,
+        form input:-webkit-autofill:focus {
+            background-color: transparent !important;
+            color: #fff !important;
+           -webkit-text-fill-color: #fff !important;
+           -webkit-box-shadow: 0 0 0px 1000px rgba(0, 0, 0, 0.2) inset;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+        form input:focus {
+           background-color: rgba(0, 0, 0, 0.2);
+           color: #fff;
+        }
+
+        form button{
+            padding: 0 20px;
+            color: #fff;
+            height: 100%;
+            background-color: #ad4f4f;
+            border-radius: 0px 4px 4px 0px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border: none;
+            outline: none;
+            display: block;
+        }
+        form button:hover{
+            background-color: #914141;
+        }
+        ::placeholder{
+            background: #00000002;
+            font-size: 1.2rem;
+            color: #fff;
+        }
+        
+        #show-more-btn{
+            background-color: #ad4f4f;
+            color: #fff;
+            padding: 0.7rem 2rem;
+            border-radius: 50px;
+            border: none;
+            outline: none;
+            font-size: 1.1rem;
+            display: none;
+            margin: 20px auto;
+            cursor: pointer;
+        }
+        #search-result{
+            max-width: 80%;
+            margin: 50px auto;
+            text-align: center;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-gap: 20px;
+        }
+        #search-result img{
+            width: 100%;
+            border-radius: 4px;
+            box-shadow: 0 0 10px #000;
+        }
+        @media screen and (max-width:400px){
+            h1{
+                font-size: 1.9rem;
+            }
+            form{
+               width: 85%;
+               margin: auto;
+               height: 60px;
+               position: relative;
+            }
+            form button{
+                position: absolute;
+                right: 0;
+                font-size: 16px;
+            }
+            form input{
+            font-size: 16px;
+            padding: 0 10px;
+        }
+        }
+    </style>
+</head>
+<body>
+    <section>
+        <h1>Image Search Engine</h1>
+        <form action="" id="search-form">
+            <input type="text" placeholder="search anything here..." id="search-box">
+            <button>search</button>
+        </form>
+        <div id="search-result"></div>
+        <button class="show-more" id="show-more-btn">show more...</button>
+    </section>
+
+    <script>
+        const accessKey = "EMOsq5bqTIXDTsvBa7KMGLnCupP-ytG1WSHdb2MPcf0";
+        const searchForm = document.getElementById("search-form");
+        const searchBox = document.getElementById("search-box");
+        const searchResult = document.getElementById("search-result");
+        const showMorebtn = document.getElementById("show-more-btn");
+
+        let keyword = "";
+        let page = 1;
+
+        async function searchImages() {
+            keyword = searchBox.value;
+            const url = `https://api.unsplash.com/search/photos?page=${page}&query=${keyword}&client_id=${accessKey}&per_page=9`;
+
+            const response = await fetch(url);
+            const data = await response.json();
+
+            const results = data.results;
+
+            results.map((result) =>{
+                const image = document.createElement("img");
+                image.src = result.urls.small;
+                const imageLink = document.createElement("a");
+                imageLink.href = result.links.html;
+                imageLink.target = "_blank";
+
+                imageLink.appendChild(image);
+                searchResult.appendChild(imageLink);
+            })
+            showMorebtn.style.display = "block";
+        }
+
+        searchForm.addEventListener("submit" , (e) =>{
+            e.preventDefault();
+            page = 1;
+            searchImages();
+        })
+
+        showMorebtn.addEventListener("click" , () =>{
+            page++;
+            searchImages();
+        })
+    </script>
+
+</body>
+</html>
